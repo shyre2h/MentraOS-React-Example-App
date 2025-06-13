@@ -18,10 +18,6 @@ RUN bun run build
 FROM oven/bun:1.1.0-slim
 WORKDIR /app
 
-# Create non-root user
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 bun
-
 # Copy built application
 COPY --from=builder --chown=bun:nodejs /app .
 
@@ -30,9 +26,6 @@ ENV NODE_ENV=production
 
 # Expose port
 EXPOSE 3000
-
-# Switch to non-root user
-USER bun
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
