@@ -15,21 +15,22 @@ COPY . .
 RUN bun run build
 
 # ---- Production stage ----
-FROM oven/bun:1.1.0
+FROM node:18-bullseye-slim AS production
 WORKDIR /app
 
-# Copy built application
-COPY --from=builder --chown=bun:nodejs /app .
+# 3) Copy only what we need for production
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
-# Set environment
+# 4) Copy the compiled output from builder
+COPY --from=builder /app/dist-frontend ./public
+COPY --from=builder /app/dist-backend ./dist
+
 ENV NODE_ENV=production
-
-# Expose port
 EXPOSE 3000
 
-# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000/api/health || exit 1
+    CMD curl -f http://localhost:3000/api/health || exit 1
 
-# Start the application
-CMD ["bun", "run", "src/index.ts"]
+# 5) Run under Node (whose zlib.createBrotliDecompress *is* implemented)
+CMD ["node", "dist/index.js"]
