@@ -6,7 +6,7 @@ WORKDIR /app
 
 # 1-a  install *production-only* deps (fast, reproducible, Brotli not required here)
 COPY bun.lock package.json ./
-RUN bun install --frozen-lockfile --production       # node_modules/ populated
+RUN bun install --production       # node_modules/ populated
 
 # 1-b  copy source and run both builds
 COPY . .
