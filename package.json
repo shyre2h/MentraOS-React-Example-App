@@ -8,8 +8,13 @@
     "dev:backend": "bun --watch src/index.ts",
     "dev:frontend": "vite",
     "build": "vite build",
+    "build:prod": "bun install --production && vite build",
     "preview": "vite preview",
-    "start": "bun run src/index.ts"
+    "start": "bun run src/index.ts",
+    "start:prod": "NODE_ENV=production bun run src/index.ts"
+  },
+  "engines": {
+    "bun": ">=1.0.0"
   },
   "dependencies": {
     "@augmentos/react": "^0.1.0",
