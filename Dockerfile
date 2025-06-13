@@ -15,7 +15,7 @@ COPY . .
 RUN bun run build
 
 # ---- Production stage ----
-FROM oven/bun:1.1.0-slim
+FROM oven/bun:1.1.0
 WORKDIR /app
 
 # Copy built application
