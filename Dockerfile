@@ -1,41 +1,57 @@
-########################
-# 1️⃣  deps stage – install prod deps using the LOCK FILE
-########################
-FROM oven/bun:1.1.0 AS deps
+# Multi-stage Dockerfile for AugmentOS React Example App
+
+# Stage 1: Build stage
+FROM oven/bun:1.1-alpine AS builder
+
+# Set working directory
 WORKDIR /app
 
-# copy manifest & lockfile first to maximise cache hits
+# Copy package files first (for better caching)
 COPY package.json bun.lock ./
 
-# install ONLY prod deps, fail if lockfile/manifest diverge
-RUN bun install --production --frozen-lockfile  \
-    && bun pm cache clean                      # tiny layer
+# Install all dependencies
+RUN bun install --frozen-lockfile
 
-########################
-# 2️⃣  build stage – compile React & TS backend
-########################
-FROM oven/bun:1.1.0 AS builder
-WORKDIR /app
-
-# re-use node_modules produced above
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/package.json ./package.json
-
-# copy sources & build
+# Copy application code
 COPY . .
-RUN bun run build && \
-    bun build src/index.ts --outfile=dist/index.js --target=node
 
-########################
-# 3️⃣  runtime stage – Node image (Brotli-enabled)
-########################
-FROM node:20-bullseye-slim
+# Build the React frontend
+RUN bun run build
+
+# Stage 2: Production stage
+FROM oven/bun:1.1-alpine
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
+# Set working directory
 WORKDIR /app
 
-# compiled output + exact dependency tree
-COPY --from=builder /app/dist         ./dist
-COPY --from=deps    /app/node_modules ./node_modules
+# Copy package files
+COPY package.json bun.lock ./
 
-ENV NODE_ENV=production
+# Install production dependencies only
+RUN bun install --frozen-lockfile --production
+
+# Copy application code and built assets
+COPY --chown=nodejs:nodejs . .
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+
+# Switch to non-root user
+USER nodejs
+
+# Expose port (default 3000)
 EXPOSE 3000
-CMD ["node", "dist/index.js"]
+
+# Set production environment
+ENV NODE_ENV=production
+
+# Use dumb-init to handle signals properly
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start the application
+CMD ["bun", "run", "src/index.ts"]
