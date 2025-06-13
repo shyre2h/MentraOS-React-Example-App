@@ -19,7 +19,7 @@ FROM node:18-bullseye-slim AS production
 WORKDIR /app
 
 # 3) Copy only what we need for production
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm ci --omit=dev
 
 # 4) Copy the compiled output from builder
