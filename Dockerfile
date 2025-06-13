@@ -5,8 +5,8 @@ FROM oven/bun:1.1.0 AS builder
 WORKDIR /app
 
 # 1-a  install *production-only* deps (fast, reproducible, Brotli not required here)
-COPY bun.lockb package.json ./
-RUN bun install --frozen-lockfile --production       # node_modules/ populated
+COPY package.json ./
+RUN bun install --production       # node_modules/ populated
 
 # 1-b  copy source and run both builds
 COPY . .
