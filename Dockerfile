@@ -5,7 +5,7 @@ FROM oven/bun:1.1.0 AS deps
 WORKDIR /app
 
 # copy manifest & lockfile first to maximise cache hits
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 
 # install ONLY prod deps, fail if lockfile/manifest diverge
 RUN bun install --production --frozen-lockfile  \
