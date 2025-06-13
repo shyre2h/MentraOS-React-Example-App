@@ -4,7 +4,6 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json bun.lock* ./
-COPY augmentos-react/package.json ./augmentos-react/
 
 # Install dependencies
 RUN bun install
