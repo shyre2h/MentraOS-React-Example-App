@@ -7,10 +7,12 @@ FROM oven/bun:1.1-alpine AS builder
 WORKDIR /app
 
 # Copy package files first (for better caching)
-COPY package.json bun.lock ./
+COPY package.json ./
+# Don't copy lockfile - let Bun generate it fresh in the container
+# This avoids Windows/Linux lockfile format incompatibilities
 
 # Install all dependencies
-RUN bun install --frozen-lockfile
+RUN bun install
 
 # Copy application code
 COPY . .
@@ -32,10 +34,10 @@ RUN addgroup -g 1001 -S nodejs && \
 WORKDIR /app
 
 # Copy package files
-COPY package.json bun.lock ./
+COPY package.json ./
 
 # Install production dependencies only
-RUN bun install --frozen-lockfile --production
+RUN bun install --production
 
 # Copy application code and built assets
 COPY --chown=nodejs:nodejs . .

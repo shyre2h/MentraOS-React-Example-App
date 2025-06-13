@@ -2,6 +2,10 @@
 node_modules
 */node_modules
 
+# Bun lockfiles (exclude to avoid Windows/Linux format issues)
+bun.lock
+bun.lockb
+
 # Build outputs (will be generated during build)
 dist
 */dist
