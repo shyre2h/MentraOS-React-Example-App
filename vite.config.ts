@@ -20,6 +20,10 @@ export default defineConfig({
       '/webview': {
         target: 'http://localhost:3000',
         changeOrigin: true
+      },
+      '/webhook': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
       }
     }
   },
