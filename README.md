@@ -170,31 +170,28 @@ app.get('/api/transcripts', (req: AuthenticatedRequest, res) => {
 
 1. **Hot Reload**: The frontend supports hot module replacement for instant updates
 2. **Backend Changes**: Backend changes require a restart (or use `bun --watch`)
-3. **Testing Auth**: Always test through the AugmentOS manager app for proper authentication
-4. **Console Logs**: Check browser console for SSE connection status and messages
+3. **Testing Auth**: Test through the AugmentOS manager app for proper authentication
 
 ## Production Deployment
 
 For production:
 
-1. Build the frontend:
+1. Build:
    ```bash
-   bun run build
+   bun run build:prod
+   ```
+2. Run:
+   ```bash
+   bun run start:prod
    ```
 
-2. Set `NODE_ENV=production` and run:
-   ```bash
-   NODE_ENV=production bun run start
-   ```
-
-3. Deploy to your preferred hosting service
+3. Deploy to your preferred hosting service.  See [DEPLOYMENT-single-server.md](DEPLOYMENT-single-server.md) for more details.
 
 ## Common Issues
 
 ### "Not Authenticated" Message
 - Ensure you're opening the webview from the AugmentOS manager app
 - Check that your app URL in the Developer Console is correct
-- Verify the `aos_signed_user_token` is in the URL
 
 ### No Transcripts Appearing
 - Verify MICROPHONE permission is enabled in Developer Console
@@ -206,17 +203,11 @@ For production:
 - Verify CORS settings if frontend/backend are on different domains
 - Look for authentication errors in backend logs
 
-## Next Steps
-
-- Add visual indicators for interim vs final transcripts
-- Store transcript history
-- Add export functionality
-- Implement user preferences
-- Create a transcript search feature
 
 ## Resources
 
 - [AugmentOS Docs](https://docs.augmentos.org)
 - [React Webviews Guide](https://docs.augmentos.org/react-webviews)
-- [AugmentOS SDK Reference](https://docs.augmentos.org/sdk)
+- [Deployment Guide](DEPLOYMENT-single-server.md)
+- [Seperate Frontend/Backend Servers Deployment Guide](DEPLOYMENT-separate-servers.md)
 - [Discord Community](https://discord.gg/5ukNvkEAqT)

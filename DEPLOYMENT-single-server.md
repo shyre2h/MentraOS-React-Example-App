@@ -21,43 +21,53 @@ NODE_ENV=production                     # Required for production mode
 
 ## Deployment Options
 
-### Option 1: Docker (Recommended)
+### Option 1: Platform-as-a-Service
 
-#### Build and Run Locally
+**Railway:**
+
+Railway provides a modern deployment platform with automatic builds using Nixpacks. Here's a quick guide, or check out our full [Railway Deployment Guide](https://docs.augmentos.org/railway-deployment) for more details.
+
+#### Prerequisites
+- GitHub/GitLab repository with your code
+- Railway account (sign up at [railway.app](https://railway.app))
+- Railway CLI (optional, but recommended)
+
+#### Method 1: Web Dashboard Deployment (Recommended)
+
+1. **Connect Repository:**
+   - Go to [railway.app](https://railway.app) and sign in
+   - Click "New Project" → "Deploy from GitHub repo"
+   - Select your AugmentOS React Example App repository
+   - Railway will automatically detect it's a Node.js/Bun project
+
+2. **Configure Environment Variables:**
+   In the Railway dashboard, go to your service → Variables tab and add:
+   ```
+   PACKAGE_NAME=com.yourorg.yourapp
+   AUGMENTOS_API_KEY=your_api_key_here
+   NODE_ENV=production
+   PORT=3000
+   ```
+
+3. **Deploy:**
+   - Railway will automatically trigger a deployment when you push to your main branch
+   - Initial deployment will take 2-3 minutes
+
+**Render:**
+1. Connect your GitHub repository
+2. Set build command: `bun run build:prod`
+3. Set start command: `bun run start:prod`
+4. Add environment variables in dashboard
+
+**Heroku:**
 ```bash
-# Build the Docker image
-docker build -t augmentos-react-example:latest .
+# Add buildpack for Bun
+heroku buildpacks:add https://github.com/xhyrom/heroku-buildpack-bun.git
 
-# Run the container
-docker run -p 80:3000 \
-  -e PACKAGE_NAME="com.yourorg.yourapp" \
-  -e AUGMENTOS_API_KEY="your_api_key_here" \
-  augmentos-react-example:latest
+# Deploy
+git push heroku main
 ```
 
-#### Deploy to Container Platforms
-
-**AWS ECS/Fargate:**
-```bash
-# Tag and push to ECR
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.us-east-1.amazonaws.com
-docker tag augmentos-react-example:latest 123456789012.dkr.ecr.us-east-1.amazonaws.com/augmentos-react-example:latest
-docker push 123456789012.dkr.ecr.us-east-1.amazonaws.com/augmentos-react-example:latest
-```
-
-**Google Cloud Run:**
-```bash
-# Build and deploy
-gcloud builds submit --tag gcr.io/PROJECT-ID/augmentos-react-example
-gcloud run deploy --image gcr.io/PROJECT-ID/augmentos-react-example --platform managed
-```
-
-**Azure Container Apps:**
-```bash
-# Build and push to ACR
-az acr build --registry myregistry --image augmentos-react-example .
-az containerapp create --resource-group myRG --name augmentos-app --image myregistry.azurecr.io/augmentos-react-example
-```
 
 ### Option 2: Bare Metal / VM
 
@@ -128,34 +138,6 @@ EOF
 pm2 start ecosystem.config.js
 pm2 save
 pm2 startup
-```
-
-### Option 3: Platform-as-a-Service
-
-**Railway:**
-```bash
-# Install Railway CLI
-npm install -g @railway/cli
-
-# Login and deploy
-railway login
-railway init
-railway up
-```
-
-**Render:**
-1. Connect your GitHub repository
-2. Set build command: `bun run build:prod`
-3. Set start command: `bun run start:prod`
-4. Add environment variables in dashboard
-
-**Heroku:**
-```bash
-# Add buildpack for Bun
-heroku buildpacks:add https://github.com/xhyrom/heroku-buildpack-bun.git
-
-# Deploy
-git push heroku main
 ```
 
 ## HTTPS and Reverse Proxy
