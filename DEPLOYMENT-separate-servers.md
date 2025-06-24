@@ -1,6 +1,6 @@
 # Separate Server Deployment Guide
 
-This guide covers deploying the AugmentOS React Example App when you want to run the **frontend** and **backend** on separate servers or hosting platforms. This architecture provides greater flexibility, better scaling options, and allows different teams to manage frontend and backend deployments independently.
+This guide covers deploying the MentraOS React Example App when you want to run the **frontend** and **backend** on separate servers or hosting platforms. This architecture provides greater flexibility, better scaling options, and allows different teams to manage frontend and backend deployments independently.
 
 ## Architecture Overview
 
@@ -13,14 +13,14 @@ In a separate server deployment:
 │                     │               │                     │
 │ • Static files      │               │ • /api/* routes     │
 │ • HTML/CSS/JS       │               │ • SSE endpoints     │
-│ • Served by CDN/    │               │ • AugmentOS SDK     │
+│ • Served by CDN/    │               │ • MentraOS SDK      │
 │   Static hosting    │               │ • Authentication    │
 └─────────────────────┘               └─────────────────────┘
            │                                     │
            │                                     │
            ▼                                     ▼
 ┌─────────────────────┐               ┌─────────────────────┐
-│ AugmentOS Manager   │               │  AugmentOS Cloud    │
+│  MentraOS Manager   │               │   MentraOS Cloud    │
 │       App           │               │    (Sessions)       │
 └─────────────────────┘               └─────────────────────┘
 ```
@@ -29,7 +29,7 @@ In a separate server deployment:
 
 - **Two separate hosting environments** (e.g., Vercel + Railway, Netlify + Render)
 - **Custom domains or known URLs** for both frontend and backend
-- **HTTPS enabled** on both servers (required for AugmentOS)
+- **HTTPS enabled** on both servers (required for MentraOS)
 - **CORS configuration** properly set up
 
 ## Step-by-Step Configuration
@@ -41,9 +41,9 @@ In a separate server deployment:
 Create or update your backend `.env` file:
 
 ```env
-# Core AugmentOS Configuration
+# Core MentraOS Configuration
 PACKAGE_NAME=com.yourorg.yourapp
-AUGMENTOS_API_KEY=your_api_key_here
+MENTRAOS_API_KEY=your_api_key_here
 PORT=3000
 NODE_ENV=production
 
@@ -60,13 +60,13 @@ ALLOWED_ORIGINS=https://yourapp.vercel.app,https://yourapp-staging.vercel.app
 Update your `src/index.ts` to remove static file serving and add proper CORS:
 
 ```typescript
-import { TpaServer, TpaSession, AuthenticatedRequest } from '@augmentos/sdk';
+import { TpaServer, TpaSession, AuthenticatedRequest } from '@mentra/sdk';
 import express from 'express';
 import cors from 'cors';
 
 // Load configuration from environment variables
 const PACKAGE_NAME = process.env.PACKAGE_NAME ?? (() => { throw new Error('PACKAGE_NAME is not set in .env file'); })();
-const AUGMENTOS_API_KEY = process.env.AUGMENTOS_API_KEY ?? (() => { throw new Error('AUGMENTOS_API_KEY is not set in .env file'); })();
+const MENTRAOS_API_KEY = process.env.MENTRAOS_API_KEY ?? (() => { throw new Error('MENTRAOS_API_KEY is not set in .env file'); })();
 const PORT = parseInt(process.env.PORT || '3000');
 
 // Parse allowed origins from environment
@@ -85,7 +85,7 @@ interface TranscriptData {
 }
 
 /**
- * ExampleReactApp - AugmentOS app backend server for separate deployment
+ * ExampleReactApp - MentraOS app backend server for separate deployment
  */
 class ExampleReactApp extends TpaServer {
   /** Map to store active SSE connections by userId */
@@ -94,7 +94,7 @@ class ExampleReactApp extends TpaServer {
   constructor() {
     super({
       packageName: PACKAGE_NAME,
-      apiKey: AUGMENTOS_API_KEY,
+      apiKey: MENTRAOS_API_KEY,
       port: PORT,
     });
 
@@ -148,7 +148,7 @@ class ExampleReactApp extends TpaServer {
     // Root endpoint to verify backend is running
     app.get('/', (req, res) => {
       res.json({
-        status: 'AugmentOS React Example Backend',
+        status: 'MentraOS React Example Backend',
         version: '1.0.0',
         timestamp: new Date().toISOString()
       });
@@ -243,7 +243,7 @@ class ExampleReactApp extends TpaServer {
   }
 
   /**
-   * Handle new AugmentOS sessions
+   * Handle new MentraOS sessions
    * @param session - The TPA session instance
    * @param sessionId - Unique session identifier
    * @param userId - User identifier
@@ -300,9 +300,9 @@ Create a production-focused `package.json` for the backend:
 
 ```json
 {
-  "name": "augmentos-react-example-backend",
+  "name": "mentraos-react-example-backend",
   "version": "1.0.0",
-  "description": "AugmentOS React Example App - Backend API Server",
+  "description": "MentraOS React Example App - Backend API Server",
   "type": "module",
   "main": "src/index.ts",
   "scripts": {
@@ -317,7 +317,7 @@ Create a production-focused `package.json` for the backend:
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@augmentos/sdk": "^1.1.10",
+    "@mentra/sdk": "^1.1.20",
     "express": "^4.18.2",
     "cors": "^2.8.5"
   },
@@ -350,9 +350,9 @@ Update your frontend `package.json` to remove backend dependencies:
 
 ```json
 {
-  "name": "augmentos-react-example-frontend",
+  "name": "mentraos-react-example-frontend",
   "version": "1.0.0",
-  "description": "AugmentOS React Example App - Frontend",
+  "description": "MentraOS React Example App - Frontend",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -361,7 +361,7 @@ Update your frontend `package.json` to remove backend dependencies:
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
-    "@augmentos/react": "^0.1.0",
+    "@mentra/react": "^0.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
@@ -401,7 +401,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          augmentos: ['@augmentos/react']
+          mentra: ['@mentra/react']
         }
       }
     }
@@ -431,7 +431,7 @@ Modify your React components to use the backend URL from environment variables:
 ```typescript
 // src/frontend/components/TranscriptDisplay.tsx
 import React, { useState, useEffect } from 'react';
-import { useAugmentosAuth } from '@augmentos/react';
+import { useMentraAuth } from '@mentra/react';
 
 /**
  * Get the backend URL from environment variables
@@ -442,10 +442,10 @@ const getBackendUrl = (): string => {
 };
 
 /**
- * Component that displays live transcripts from AugmentOS sessions
+ * Component that displays live transcripts from MentraOS sessions
  */
 const TranscriptDisplay: React.FC = () => {
-  const { frontendToken, isAuthenticated, userId } = useAugmentosAuth();
+  const { frontendToken, isAuthenticated, userId } = useMentraAuth();
   const [transcripts, setTranscripts] = useState<string[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<'disconnected' | 'connecting' | 'connected'>('disconnected');
   const [error, setError] = useState<string | null>(null);
@@ -522,7 +522,7 @@ const TranscriptDisplay: React.FC = () => {
 
         {!isAuthenticated ? (
           <div className="text-center py-8">
-            <p className="text-gray-500">Please authenticate through the AugmentOS manager app.</p>
+            <p className="text-gray-500">Please authenticate through the MentraOS manager app.</p>
           </div>
         ) : (
           <>
@@ -578,7 +578,7 @@ export default TranscriptDisplay;
 2. **Environment Variables:**
    ```env
    PACKAGE_NAME=com.yourorg.yourapp
-   AUGMENTOS_API_KEY=your_api_key_here
+   MENTRAOS_API_KEY=your_api_key_here
    NODE_ENV=production
    PORT=3000
    ALLOWED_ORIGINS=https://yourapp.vercel.app,https://yourapp-staging.vercel.app
@@ -606,7 +606,7 @@ heroku buildpacks:add https://github.com/xhyrom/heroku-buildpack-bun.git
 
 # Configure environment variables
 heroku config:set PACKAGE_NAME=com.yourorg.yourapp
-heroku config:set AUGMENTOS_API_KEY=your_api_key
+heroku config:set MENTRAOS_API_KEY=your_api_key
 heroku config:set ALLOWED_ORIGINS=https://yourapp.vercel.app
 
 # Deploy
@@ -693,7 +693,7 @@ curl https://your-backend-api.railway.app/api/health
 2. **Production Testing:**
    - Open your deployed frontend URL
    - Check browser console for CORS errors
-   - Test authentication flow through AugmentOS app
+   - Test authentication flow through MentraOS app
    - Verify SSE connection in Network tab
 
 ### 5. Monitoring and Troubleshooting

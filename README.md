@@ -1,18 +1,18 @@
-# AugmentOS React Example App
+# MentraOS React Example App
 
-This example demonstrates how to build a React-based webview for AugmentOS apps using the `@augmentos/react` library.  Check out the full [AugmentOS React Documentation](https://docs.augmentos.org/react-webviews) for more details.
+This example demonstrates how to build a React-based webview for MentraOS apps using the `@mentra/react` library.  Check out the full [MentraOS React Documentation](https://docs.mentra.glass/react-webviews) for more details.
 
 ## Prerequisites
 
 - Node.js 18+ and Bun installed
-- AugmentOS installed on your phone
-- An AugmentOS Developer Console account
+- MentraOS installed on your phone
+- An MentraOS Developer Console account
 
 ## Quick Start
 
 ### 1. Setup Your Repo
 
-1. Create a new repo from this template using the `Use this template` dropdown in the upper right or the following command: `gh repo create --template AugmentOS-Community/AugmentOS-React-Example-App`
+1. Create a new repo from this template using the `Use this template` dropdown in the upper right or the following command: `gh repo create --template Mentra-Community/MentraOS-React-Example-App`
 
     ![Create repo from template](https://github.com/user-attachments/assets/c10e14e8-2dc5-4dfa-adac-dd334c1b73a5)
 
@@ -35,12 +35,12 @@ This example demonstrates how to build a React-based webview for AugmentOS apps 
   ```env
   PORT=3000
   PACKAGE_NAME=com.yourname.reactexampleapp
-  AUGMENTOS_API_KEY=your_api_key_from_console
+  MENTRAOS_API_KEY=your_api_key_from_console
   ```
 
 ### 3. Register Your App
 
-1. Go to [console.AugmentOS.org](https://console.AugmentOS.org/)
+1. Go to [console.mentra.glass](https://console.mentra.glass/)
 2. Click "Create App"
 3. Set your package name (must match `.env`)
 4. Enter your public URL (later, update this to your ngrok URL)
@@ -69,25 +69,25 @@ ngrok http --url=<YOUR_NGROK_URL> 5173
 
 ```
 ┌─────────────────────┐
-│  AugmentOS Manager  │
+│   MentraOS Manager  │
 │        App          │
 └──────────┬──────────┘
            │ Opens webview with token
            ▼
 ┌─────────────────────┐
 │   React Frontend    │
-│  (@augmentos/react) │
+│   (@mentra/react)   │
 └──────────┬──────────┘
            │ Authenticated SSE connection
            ▼
 ┌─────────────────────┐
 │   Backend Server    │
-│  (@augmentos/sdk)   │
+│    (@mentra/sdk)    │
 └──────────┬──────────┘
            │ Receives transcriptions
            ▼
 ┌─────────────────────┐
-│  AugmentOS Session  │
+│   MentraOS Session  │
 │   (Smart Glasses)   │
 └─────────────────────┘
 ```
@@ -96,20 +96,20 @@ ngrok http --url=<YOUR_NGROK_URL> 5173
 
 ### Frontend (React)
 
-1. **Authentication**: The `AugmentosAuthProvider` automatically extracts and verifies the user token
+1. **Authentication**: The `MentraAuthProvider` automatically extracts and verifies the user token
 2. **SSE Connection**: Establishes a Server-Sent Events connection to receive live updates
 3. **UI Updates**: Displays transcripts in real-time with connection status
 
-### Backend (Express + AugmentOS SDK)
+### Backend (Express + MentraOS SDK)
 
-1. **Session Management**: Handles AugmentOS sessions when users activate the app
+1. **Session Management**: Handles MentraOS sessions when users activate the app
 2. **Transcript Relay**: Receives transcription events and forwards them via SSE
 3. **Authentication**: SDK middleware validates user tokens automatically
 
 ## Project Structure
 
 ```
-AugmentOS-React-Example-App/
+MentraOS-React-Example-App/
 ├── src/
 │   ├── index.ts              # Backend server
 │   └── frontend/
@@ -133,7 +133,7 @@ Handles the SSE connection and displays live transcripts:
 
 ```typescript
 const TranscriptDisplay: React.FC = () => {
-  const { frontendToken } = useAugmentosAuth();
+  const { frontendToken } = useMentraAuth();
   const [currentTranscript, setCurrentTranscript] = useState<string>('');
   // ... SSE connection logic
 };
@@ -158,7 +158,7 @@ app.get('/api/transcripts', (req: AuthenticatedRequest, res) => {
 
 1. **Hot Reload**: The frontend supports hot module replacement for instant updates
 2. **Backend Changes**: Backend changes require a restart (or use `bun --watch`)
-3. **Testing Auth**: Test through the AugmentOS manager app for proper authentication
+3. **Testing Auth**: Test through the MentraOS manager app for proper authentication
 
 ## Production Deployment
 
@@ -178,7 +178,7 @@ For production:
 ## Common Issues
 
 ### "Not Authenticated" Message
-- Ensure you're opening the webview from the AugmentOS manager app
+- Ensure you're opening the webview from the MentraOS manager app
 - Check that your app URL in the Developer Console is correct
 
 ### No Transcripts Appearing
@@ -194,8 +194,8 @@ For production:
 
 ## Resources
 
-- [AugmentOS Docs](https://docs.augmentos.org)
-- [React Webviews Guide](https://docs.augmentos.org/react-webviews)
+- [MentraOS Docs](https://docs.mentra.glass)
+- [React Webviews Guide](https://docs.mentra.glass/react-webviews)
 - [Deployment Guide](DEPLOYMENT-single-server.md)
 - [Seperate Frontend/Backend Servers Deployment Guide](DEPLOYMENT-separate-servers.md)
 - [Discord Community](https://discord.gg/5ukNvkEAqT)

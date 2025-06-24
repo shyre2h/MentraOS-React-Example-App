@@ -1,12 +1,12 @@
 # Production Deployment Guide
 
-This guide covers deploying the AugmentOS React Example App to production. The application uses a **single server architecture** where one Express/Bun server handles both the API routes and serves the compiled React frontend.
+This guide covers deploying the MentraOS React Example App to production. The application uses a **single server architecture** where one Express/Bun server handles both the API routes and serves the compiled React frontend.
 
 ## Quick Start
 
 ### Prerequisites
 - Bun ≥ 1.0.0
-- Your AugmentOS TPA package name and API key
+- Your MentraOS TPA package name and API key
 - HTTPS-capable hosting environment
 
 ### Environment Variables
@@ -14,7 +14,7 @@ Set these environment variables in production:
 
 ```bash
 PACKAGE_NAME=com.yourorg.yourapp        # Your TPA package name
-AUGMENTOS_API_KEY=your_api_key_here     # Your TPA API key
+MENTRAOS_API_KEY=your_api_key_here     # Your TPA API key
 PORT=3000                               # Optional, defaults to 3000
 NODE_ENV=production                     # Required for production mode
 ```
@@ -25,7 +25,7 @@ NODE_ENV=production                     # Required for production mode
 
 **Railway:**
 
-Railway provides a modern deployment platform with automatic builds using Nixpacks. Here's a quick guide, or check out our full [Railway Deployment Guide](https://docs.augmentos.org/railway-deployment) for more details.
+Railway provides a modern deployment platform with automatic builds using Nixpacks. Here's a quick guide, or check out our full [Railway Deployment Guide](https://docs.mentra.glass/railway-deployment) for more details.
 
 #### Prerequisites
 - GitHub/GitLab repository with your code
@@ -37,14 +37,14 @@ Railway provides a modern deployment platform with automatic builds using Nixpac
 1. **Connect Repository:**
    - Go to [railway.app](https://railway.app) and sign in
    - Click "New Project" → "Deploy from GitHub repo"
-   - Select your AugmentOS React Example App repository
+   - Select your MentraOS React Example App repository
    - Railway will automatically detect it's a Node.js/Bun project
 
 2. **Configure Environment Variables:**
    In the Railway dashboard, go to your service → Variables tab and add:
    ```
    PACKAGE_NAME=com.yourorg.yourapp
-   AUGMENTOS_API_KEY=your_api_key_here
+   MENTRAOS_API_KEY=your_api_key_here
    NODE_ENV=production
    PORT=3000
    ```
@@ -78,25 +78,25 @@ curl -fsSL https://bun.sh/install | bash
 
 # Clone and setup
 git clone <your-repo-url>
-cd AugmentOS-React-Example-App
+cd MentraOS-React-Example-App
 
 # Install dependencies and build
 bun install --production
 bun run build
 
 # Create systemd service
-sudo tee /etc/systemd/system/augmentos-app.service > /dev/null <<EOF
+sudo tee /etc/systemd/system/mentraos-app.service > /dev/null <<EOF
 [Unit]
-Description=AugmentOS React Example App
+Description=MentraOS React Example App
 After=network.target
 
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/AugmentOS-React-Example-App
+WorkingDirectory=/home/ubuntu/MentraOS-React-Example-App
 Environment=NODE_ENV=production
 Environment=PACKAGE_NAME=com.yourorg.yourapp
-Environment=AUGMENTOS_API_KEY=your_api_key_here
+Environment=MENTRAOS_API_KEY=your_api_key_here
 Environment=PORT=3000
 ExecStart=/home/ubuntu/.bun/bin/bun run src/index.ts
 Restart=always
@@ -108,8 +108,8 @@ EOF
 
 # Start service
 sudo systemctl daemon-reload
-sudo systemctl enable augmentos-app
-sudo systemctl start augmentos-app
+sudo systemctl enable mentraos-app
+sudo systemctl start mentraos-app
 ```
 
 #### Using PM2 (Alternative Process Manager)
@@ -121,13 +121,13 @@ bun add -g pm2
 cat > ecosystem.config.js << EOF
 module.exports = {
   apps: [{
-    name: 'augmentos-app',
+    name: 'mentraos-app',
     script: 'bun',
     args: 'run src/index.ts',
     env: {
       NODE_ENV: 'production',
       PACKAGE_NAME: 'com.yourorg.yourapp',
-      AUGMENTOS_API_KEY: 'your_api_key_here',
+      MENTRAOS_API_KEY: 'your_api_key_here',
       PORT: 3000
     }
   }]
@@ -217,7 +217,7 @@ The application can be horizontally scaled, but note:
 
 **"Token validation failed":**
 - Check system clock synchronization
-- Verify AUGMENTOS_API_KEY is correct
+- Verify MENTRAOS_API_KEY is correct
 - Ensure PACKAGE_NAME matches your registered TPA
 
 **SSE connections not working:**
@@ -236,10 +236,10 @@ The application can be horizontally scaled, but note:
 docker logs <container-id>
 
 # Systemd logs
-sudo journalctl -u augmentos-app -f
+sudo journalctl -u mentraos-app -f
 
 # PM2 logs
-pm2 logs augmentos-app
+pm2 logs mentraos-app
 ```
 
 ## Performance Optimization
@@ -258,4 +258,4 @@ pm2 logs augmentos-app
 
 ---
 
-For additional help, refer to the [AugmentOS documentation](https://docs.augmentos.com) or contact support.
+For additional help, refer to the [MentraOS documentation](https://docs.mentra.glass) or contact support.

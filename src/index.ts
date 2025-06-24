@@ -1,10 +1,10 @@
-import { TpaServer, TpaSession, AuthenticatedRequest } from '@augmentos/sdk';
+import { TpaServer, TpaSession, AuthenticatedRequest } from '@mentra/sdk';
 import express from 'express';
 import path from 'path';
 
 // Load configuration from environment variables
 const PACKAGE_NAME = process.env.PACKAGE_NAME ?? (() => { throw new Error('PACKAGE_NAME is not set in .env file'); })();
-const AUGMENTOS_API_KEY = process.env.AUGMENTOS_API_KEY ?? (() => { throw new Error('AUGMENTOS_API_KEY is not set in .env file'); })();
+const MENTRAOS_API_KEY = process.env.MENTRAOS_API_KEY ?? (() => { throw new Error('MENTRAOS_API_KEY is not set in .env file'); })();
 const PORT = parseInt(process.env.PORT || '3000');
 
 /**
@@ -17,7 +17,7 @@ interface TranscriptData {
 }
 
 /**
- * ExampleReactApp - AugmentOS app that demonstrates React frontend integration
+ * ExampleReactApp - MentraOS app that demonstrates React frontend integration
  * with live transcript updates using Server-Sent Events
  */
 class ExampleReactApp extends TpaServer {
@@ -27,7 +27,7 @@ class ExampleReactApp extends TpaServer {
   constructor() {
     super({
       packageName: PACKAGE_NAME,
-      apiKey: AUGMENTOS_API_KEY,
+      apiKey: MENTRAOS_API_KEY,
       port: PORT,
     });
 
@@ -121,7 +121,7 @@ class ExampleReactApp extends TpaServer {
   }
 
   /**
-   * Handle new AugmentOS sessions
+   * Handle new MentraOS sessions
    * @param session - The TPA session instance
    * @param sessionId - Unique session identifier
    * @param userId - User identifier

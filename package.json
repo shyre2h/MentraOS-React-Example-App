@@ -1,7 +1,7 @@
 {
-  "name": "augmentos-react-example-app",
+  "name": "mentraos-react-example-app",
   "version": "1.0.0",
-  "description": "Example app demonstrating AugmentOS React authentication and live transcriptions",
+  "description": "Example app demonstrating MentaOS React authentication and live transcriptions",
   "type": "module",
   "scripts": {
     "dev": "concurrently \"bun run dev:backend\" \"bun run dev:frontend\"",
@@ -17,8 +17,8 @@
     "bun": ">=1.0.0"
   },
   "dependencies": {
-    "@augmentos/react": "^0.1.0",
-    "@augmentos/sdk": "^1.1.10",
+    "@mentra/react": "^0.2.0",
+    "@mentra/sdk": "^1.1.20",
     "express": "^4.18.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

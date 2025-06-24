@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useAugmentosAuth } from '@augmentos/react';
+import { useMentraAuth } from '@mentra/react';
 
 /**
  * Interface for transcript messages received via SSE
@@ -13,11 +13,11 @@ interface TranscriptMessage {
 }
 
 /**
- * Component that displays live transcripts from the AugmentOS session
+ * Component that displays live transcripts from the MentraOS session
  * Uses Server-Sent Events to receive real-time updates
  */
 const TranscriptDisplay: React.FC = () => {
-  const { frontendToken } = useAugmentosAuth();
+  const { frontendToken } = useMentraAuth();
   const [currentTranscript, setCurrentTranscript] = useState<string>('');
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [connectionError, setConnectionError] = useState<string>('');
@@ -118,7 +118,7 @@ const TranscriptDisplay: React.FC = () => {
         `}>
           {currentTranscript || (
             <span className="text-gray-400 italic">
-              Speak into your AugmentOS device to see transcripts appear here...
+              Speak into your MentraOS device to see transcripts appear here...
             </span>
           )}
         </div>
@@ -129,7 +129,7 @@ const TranscriptDisplay: React.FC = () => {
         <ul className="space-y-2">
           <li className="flex items-start text-sm text-gray-600">
             <span className="text-blue-500 font-bold mr-3">•</span>
-            Make sure your AugmentOS app has microphone permission enabled
+            Make sure your MentraOS app has microphone permission enabled
           </li>
           <li className="flex items-start text-sm text-gray-600">
             <span className="text-blue-500 font-bold mr-3">•</span>

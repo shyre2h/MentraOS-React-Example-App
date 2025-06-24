@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        'augmentos-blue': '#2563eb',
+        'blue': '#2563eb',
       },
     },
   },

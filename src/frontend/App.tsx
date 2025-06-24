@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAugmentosAuth } from '@augmentos/react';
+import { useMentraAuth } from '@mentra/react';
 import TranscriptDisplay from './components/TranscriptDisplay';
 
 /**
@@ -7,14 +7,14 @@ import TranscriptDisplay from './components/TranscriptDisplay';
  * the appropriate content based on authentication status
  */
 function App(): React.JSX.Element {
-  const { userId, isLoading, error, isAuthenticated } = useAugmentosAuth();
+  const { userId, isLoading, error, isAuthenticated } = useMentraAuth();
 
   // Handle loading state
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-100">
         <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-          <div className="w-10 h-10 border-3 border-gray-300 border-t-augmentos-blue rounded-full animate-spin"></div>
+          <div className="w-10 h-10 border-3 border-gray-300 border-t-mentraos-blue rounded-full animate-spin"></div>
           <p className="text-gray-600">Loading authentication...</p>
         </div>
       </div>
@@ -29,7 +29,7 @@ function App(): React.JSX.Element {
           <h2 className="text-red-600 text-2xl font-semibold mb-4">Authentication Error</h2>
           <p className="text-red-600 font-medium mb-2">{error}</p>
           <p className="text-gray-600 text-sm">
-            Please ensure you are opening this page from the AugmentOS app.
+            Please ensure you are opening this page from the MentraOS app.
           </p>
         </div>
       </div>
@@ -42,7 +42,7 @@ function App(): React.JSX.Element {
       <div className="min-h-screen flex flex-col bg-gray-100">
         <div className="flex flex-col items-center justify-center min-h-screen text-center p-8">
           <h2 className="text-red-600 text-2xl font-semibold mb-4">Not Authenticated</h2>
-          <p className="text-gray-700">Please open this page from the AugmentOS manager app to view live transcripts.</p>
+          <p className="text-gray-700">Please open this page from the MentraOS manager app to view live transcripts.</p>
         </div>
       </div>
     );
@@ -51,8 +51,8 @@ function App(): React.JSX.Element {
   // Authenticated - show transcript display
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <header className="bg-augmentos-blue text-white px-8 py-6 shadow-md">
-        <h1 className="text-3xl font-semibold mb-2">AugmentOS Live Transcripts</h1>
+      <header className="bg-blue text-white px-8 py-6 shadow-md">
+        <h1 className="text-3xl font-semibold mb-2">MentraOS Live Transcripts</h1>
         <div className="text-sm opacity-90">
           <span className="mr-2">User ID:</span>
           <span className="font-mono bg-white bg-opacity-10 px-2 py-0.5 rounded">
