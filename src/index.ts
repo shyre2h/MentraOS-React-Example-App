@@ -1,4 +1,4 @@
-import { TpaServer, TpaSession, AuthenticatedRequest } from '@mentra/sdk';
+import { AppServer, AppSession, AuthenticatedRequest } from '@mentra/sdk';
 import express from 'express';
 import path from 'path';
 
@@ -20,7 +20,7 @@ interface TranscriptData {
  * ExampleReactApp - MentraOS app that demonstrates React frontend integration
  * with live transcript updates using Server-Sent Events
  */
-class ExampleReactApp extends TpaServer {
+class ExampleReactApp extends AppServer {
   /** Map to store active SSE connections by userId */
   private sseConnections = new Map<string, express.Response[]>();
 
@@ -122,11 +122,11 @@ class ExampleReactApp extends TpaServer {
 
   /**
    * Handle new MentraOS sessions
-   * @param session - The TPA session instance
+   * @param session - The app session instance
    * @param sessionId - Unique session identifier
    * @param userId - User identifier
    */
-  protected async onSession(session: TpaSession, sessionId: string, userId: string): Promise<void> {
+  protected async onSession(session: AppSession, sessionId: string, userId: string): Promise<void> {
     console.log(`New session: ${sessionId} for user ${userId}`);
 
     // Show welcome message

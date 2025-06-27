@@ -6,15 +6,15 @@ This guide covers deploying the MentraOS React Example App to production. The ap
 
 ### Prerequisites
 - Bun ≥ 1.0.0
-- Your MentraOS TPA package name and API key
+- Your MentraOS app package name and API key
 - HTTPS-capable hosting environment
 
 ### Environment Variables
 Set these environment variables in production:
 
 ```bash
-PACKAGE_NAME=com.yourorg.yourapp        # Your TPA package name
-MENTRAOS_API_KEY=your_api_key_here     # Your TPA API key
+PACKAGE_NAME=com.yourorg.yourapp        # Your app package name
+MENTRAOS_API_KEY=your_api_key_here     # Your app API key
 PORT=3000                               # Optional, defaults to 3000
 NODE_ENV=production                     # Required for production mode
 ```
@@ -218,7 +218,7 @@ The application can be horizontally scaled, but note:
 **"Token validation failed":**
 - Check system clock synchronization
 - Verify MENTRAOS_API_KEY is correct
-- Ensure PACKAGE_NAME matches your registered TPA
+- Ensure PACKAGE_NAME matches your registered app
 
 **SSE connections not working:**
 - Verify proxy settings don't buffer responses
