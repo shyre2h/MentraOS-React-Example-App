@@ -4,7 +4,7 @@
     "": {
       "name": "mentraos-react-example-app",
       "dependencies": {
-        "@mentra/react": "^0.2.0",
+        "@mentra/react": "^2.0.2",
         "@mentra/sdk": "^2.0.2",
         "express": "^4.18.2",
         "react": "^19.1.0",
@@ -137,7 +137,7 @@
 
     "@logtail/types": ["@logtail/types@0.5.3", "", {}, "sha512-5uKf1xQ7wRqSW0lYIwDpXdXcFHxPKH5EM22MoEjwTpd8suymOYuEdx9qCCHCYey4uOhPq7x6OkZf86bTO83JsA=="],
 
-    "@mentra/react": ["@mentra/react@0.2.0", "", {}, "sha512-+rn/+C/dWywcwy1iLBznVVsHvyvNE7791JWxijIxJ5ae+Zq1KWylUCgE+v8SUlTv/SOH6l8gxyfCxm7WqY//1Q=="],
+    "@mentra/react": ["@mentra/react@2.0.2", "", {}, "sha512-x6g1PFYbcdZAl250/BEegzBkaF+SHKF4NoflibZaEZ3mCmIWOURTdkPzgswUlwrk4qNS8aqBkhoPSlIQP5dhng=="],
 
     "@mentra/sdk": ["@mentra/sdk@2.0.2", "", { "dependencies": { "@logtail/pino": "^0.5.4", "axios": "^1.8.1", "cookie-parser": "^1.4.7", "dotenv": "^16.4.0", "express": "^4.18.2", "jsonwebtoken": "^8.5.1", "jsrsasign": "^11.1.0", "pino": "^9.6.0", "pino-pretty": "^13.0.0", "ws": "^8.18.2" } }, "sha512-fz8E2hftmfG/5aW3KR8nvleu4ln2Gpiie0WLgz/+RxvXKBwUoiKa7qOfSY1+u0EgIP4MeVWc9yr6E10q4fNG0w=="],
 
