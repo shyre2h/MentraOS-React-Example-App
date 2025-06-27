@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@mentra/react": "^2.0.2",
-    "@mentra/sdk": "^2.0.2",
+    "@mentra/sdk": "^2.0.3",
     "express": "^4.18.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
