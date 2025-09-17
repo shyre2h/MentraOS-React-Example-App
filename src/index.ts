@@ -45,9 +45,16 @@ class ExampleReactApp extends AppServer {
       app.use(express.static(path.join(__dirname, '../dist/frontend')));
     }
 
-            // SSE endpoint for live transcript updates
-    // Note: For simplicity in this example, we're using a middleware approach
-    // In production, you'd want to verify the token from the query parameter
+    // 🔧 Root route: serve React index.html in production, placeholder in dev
+    app.get('/', (req, res) => {
+      if (process.env.NODE_ENV === 'production') {
+        res.sendFile(path.join(__dirname, '../dist/frontend/index.html'));
+      } else {
+        res.send('<h1>Ultra-Fast Karaoke React Webview</h1><p>Dev mode running — build frontend for production.</p>');
+      }
+    });
+
+    // SSE endpoint for live transcript updates
     app.get('/api/transcripts', (req: AuthenticatedRequest, res) => {
       const userId = req.authUserId;
 
@@ -56,7 +63,6 @@ class ExampleReactApp extends AppServer {
         return;
       }
 
-      // Set up SSE headers
       res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -64,16 +70,13 @@ class ExampleReactApp extends AppServer {
         'Access-Control-Allow-Origin': '*',
       });
 
-      // Store the connection
       if (!this.sseConnections.has(userId)) {
         this.sseConnections.set(userId, []);
       }
       this.sseConnections.get(userId)!.push(res);
 
-      // Send initial connection message
       res.write(`data: ${JSON.stringify({ type: 'connected', userId })}\n\n`);
 
-      // Clean up on disconnect
       req.on('close', () => {
         const connections = this.sseConnections.get(userId);
         if (connections) {
@@ -93,7 +96,7 @@ class ExampleReactApp extends AppServer {
       res.json({ status: 'ok', timestamp: Date.now() });
     });
 
-    // Catch-all route for React app (in production)
+    // 🔧 Catch-all for React Router in production
     if (process.env.NODE_ENV === 'production') {
       app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../dist/frontend/index.html'));
@@ -101,11 +104,6 @@ class ExampleReactApp extends AppServer {
     }
   }
 
-  /**
-   * Send transcript update to all SSE connections for a user
-   * @param userId - The user ID to send updates to
-   * @param transcript - The transcript data to send
-   */
   private sendTranscriptUpdate(userId: string, transcript: TranscriptData): void {
     const connections = this.sseConnections.get(userId);
     if (connections) {
@@ -120,40 +118,27 @@ class ExampleReactApp extends AppServer {
     }
   }
 
-  /**
-   * Handle new MentraOS sessions
-   * @param session - The app session instance
-   * @param sessionId - Unique session identifier
-   * @param userId - User identifier
-   */
   protected async onSession(session: AppSession, sessionId: string, userId: string): Promise<void> {
     console.log(`New session: ${sessionId} for user ${userId}`);
 
-    // Show welcome message
     session.layouts.showTextWall("React Example App - Open the webview to see live transcripts!");
 
-    // Listen for transcriptions and relay them to the frontend
     const transcriptionHandler = session.events.onTranscription((data) => {
-      // Send both interim and final transcriptions
       this.sendTranscriptUpdate(userId, {
         text: data.text,
         timestamp: Date.now(),
         isFinal: data.isFinal
       });
 
-      // Also show final transcriptions on the glasses
       if (data.isFinal) {
         session.layouts.showTextWall(`You said: ${data.text}`);
       }
     });
 
-    // Clean up handlers when session ends
     this.addCleanupHandler(transcriptionHandler);
 
-    // Handle session disconnect
     session.events.onDisconnected(() => {
       console.log(`Session ${sessionId} disconnected.`);
-      // Close any SSE connections for this user
       const connections = this.sseConnections.get(userId);
       if (connections) {
         connections.forEach(res => res.end());
@@ -165,5 +150,4 @@ class ExampleReactApp extends AppServer {
 
 // Start the server
 const app = new ExampleReactApp();
-
 app.start().catch(console.error);
