@@ -28,12 +28,15 @@ const TranscriptDisplay: React.FC = () => {
       return;
     }
 
-    // Create SSE connection with authentication
+    // Create SSE connection with authentication (token appended as query param)
     const connectToSSE = () => {
       try {
-        // SSE doesn't support custom headers, but the SDK middleware handles auth via cookies
-        // The frontend token is automatically included by the browser
-        const eventSource = new EventSource('/api/transcripts');
+        // Prefer an explicit backend URL via VITE_BACKEND_URL, otherwise same origin
+        const backend = (import.meta as any).env?.VITE_BACKEND_URL || '';
+        const tokenQuery = frontendToken ? `?token=${encodeURIComponent(frontendToken)}` : '';
+        const url = backend ? `${backend.replace(/\/$/, '')}/api/transcripts${tokenQuery}` : `/api/transcripts${tokenQuery}`;
+
+        const eventSource = new EventSource(url);
         eventSourceRef.current = eventSource;
 
         eventSource.onopen = () => {
