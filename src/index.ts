@@ -1,6 +1,7 @@
 import { AppServer, AppSession, AuthenticatedRequest } from '@mentra/sdk';
 import express from 'express';
 import path from 'path';
+import { existsSync } from 'fs';
 
 // Load configuration from environment variables
 const PACKAGE_NAME = process.env.PACKAGE_NAME ?? (() => { throw new Error('PACKAGE_NAME is not set in .env file'); })();
@@ -43,18 +44,19 @@ class ExampleReactApp extends AppServer {
     // Serve static files in production
     if (process.env.NODE_ENV === 'production') {
       app.use(express.static(path.join(__dirname, '../dist/frontend')));
+    const distPath = path.join(__dirname, '../dist/frontend');
+    const hasFrontendBundle = existsSync(distPath);
+
+    if (hasFrontendBundle) {
+      app.use(express.static(distPath));
+    } else {
+      console.warn(`Frontend bundle not found at "${distPath}" – static assets will not be served.`);
     }
 
-    // 🔧 Root route: serve React index.html in production, placeholder in dev
-    app.get('/', (req, res) => {
-      if (process.env.NODE_ENV === 'production') {
-        res.sendFile(path.join(__dirname, '../dist/frontend/index.html'));
-      } else {
-        res.send('<h1>Ultra-Fast Karaoke React Webview</h1><p>Dev mode running — build frontend for production.</p>');
-      }
-    });
-
+            // SSE endpoint for live transcript updates
     // SSE endpoint for live transcript updates
+    // Note: For simplicity in this example, we're using a middleware approach
+    // In production, you'd want to verify the token from the query parameter
     app.get('/api/transcripts', (req: AuthenticatedRequest, res) => {
       const userId = req.authUserId;
 
@@ -63,6 +65,7 @@ class ExampleReactApp extends AppServer {
         return;
       }
 
+      // Set up SSE headers
       res.writeHead(200, {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
@@ -70,13 +73,16 @@ class ExampleReactApp extends AppServer {
         'Access-Control-Allow-Origin': '*',
       });
 
+      // Store the connection
       if (!this.sseConnections.has(userId)) {
         this.sseConnections.set(userId, []);
       }
       this.sseConnections.get(userId)!.push(res);
 
+      // Send initial connection message
       res.write(`data: ${JSON.stringify({ type: 'connected', userId })}\n\n`);
 
+      // Clean up on disconnect
       req.on('close', () => {
         const connections = this.sseConnections.get(userId);
         if (connections) {
@@ -96,14 +102,22 @@ class ExampleReactApp extends AppServer {
       res.json({ status: 'ok', timestamp: Date.now() });
     });
 
-    // 🔧 Catch-all for React Router in production
+    // Catch-all route for React app (in production)
     if (process.env.NODE_ENV === 'production') {
+    // Catch-all route for React app when bundle exists
+    if (hasFrontendBundle) {
       app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '../dist/frontend/index.html'));
+        res.sendFile(path.join(distPath, 'index.html'));
       });
     }
   }
 
+  /**
+   * Send transcript update to all SSE connections for a user
+   * @param userId - The user ID to send updates to
+   * @param transcript - The transcript data to send
+   */
   private sendTranscriptUpdate(userId: string, transcript: TranscriptData): void {
     const connections = this.sseConnections.get(userId);
     if (connections) {
@@ -118,36 +132,5 @@ class ExampleReactApp extends AppServer {
     }
   }
 
-  protected async onSession(session: AppSession, sessionId: string, userId: string): Promise<void> {
-    console.log(`New session: ${sessionId} for user ${userId}`);
-
-    session.layouts.showTextWall("React Example App - Open the webview to see live transcripts!");
-
-    const transcriptionHandler = session.events.onTranscription((data) => {
-      this.sendTranscriptUpdate(userId, {
-        text: data.text,
-        timestamp: Date.now(),
-        isFinal: data.isFinal
-      });
-
-      if (data.isFinal) {
-        session.layouts.showTextWall(`You said: ${data.text}`);
-      }
-    });
-
-    this.addCleanupHandler(transcriptionHandler);
-
-    session.events.onDisconnected(() => {
-      console.log(`Session ${sessionId} disconnected.`);
-      const connections = this.sseConnections.get(userId);
-      if (connections) {
-        connections.forEach(res => res.end());
-        this.sseConnections.delete(userId);
-      }
-    });
-  }
-}
-
-// Start the server
-const app = new ExampleReactApp();
-app.start().catch(console.error);
+  /**
+   * Handle new MentraOS sessions
